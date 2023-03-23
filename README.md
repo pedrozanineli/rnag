@@ -1,3 +1,5 @@
+![logo](https://github.com/pedrozanineli/rnag/blob/main/logo.png)
+
 ## Disciplina de Redes Neurais e Algoritmos Genéticos
 
 No presente repositório, é possível encontrar os experimentos desenvolvidos na matéria de Redes Neurais e Algoritmos Genéticos (RNAG), matéria do terceiro semestre da Ilum - Escola de Ciência, com experimentos desenvolvidos pela primeira turma da faculdade.
@@ -6,7 +8,7 @@ No presente repositório, é possível encontrar os experimentos desenvolvidos n
   
   <br>
   
-  > A organização das pastas e dos experimentos é descrita abaixo como forma de guiar o leitor, possibilitando um entendimento facilitado. Em linhas gerais, os arquivos estão organizados da seguinte maneira:
+  A organização das pastas e dos experimentos é descrita abaixo como forma de guiar o leitor, possibilitando um entendimento facilitado. Em linhas gerais, os arquivos estão organizados da seguinte maneira:
   
   - `AlgoritmosGenéticos` - pasta com os experimentos desenvolvidos no estudo de algoritmos genéticos, englobando as funções, constantes e classes necessárias, assim como os experimentos em si;
   - `RedesNeurais` - pasta com os experimentos desenvolvidos no estudo de redes neurais, englobando as funções, constantes e classes necessárias, assim como os experimentos em si;
