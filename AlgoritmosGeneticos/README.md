@@ -31,3 +31,4 @@ Abaixo são elencados os experimentos desenvolvidos até o presente momento na d
 - experimento A.02 - tal como desenvolvido no experimento A.01, o objetivo do A.02 também é de desenvolver o problema das caixas binárias, porém realizando uma busca em grade por meio do produto cartesiano;
 - experimento A.03 - resolução do problema das caixas binárias por meio de um algoritmo genético, apoiando-se nas ideias de gene, indivíduo, população, seleção por roleta e cruzamento de ponto simples;
 - experimento A.04 - resolução semelhante ao problema das caixas binárias, porém aplicado ao problema das caixas não binárias;
+- experimento A.05 - problema de descoberta de senha, utilizando a seleção de torneio mínimo;
