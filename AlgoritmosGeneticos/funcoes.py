@@ -1,4 +1,52 @@
 import random
+import numpy as np
+
+###############################################################################
+#                                   Suporte                                   #
+##############################################################################+
+
+
+# NOVIDADE
+def distancia_entre_dois_pontos(a, b):
+    """Computa a distância Euclidiana entre dois pontos em R^2
+
+    Args:
+      a: lista contendo as coordenadas x e y de um ponto.
+      b: lista contendo as coordenadas x e y de um ponto.
+
+    Returns:
+      Distância entre as coordenadas dos pontos `a` e `b`.
+    """
+
+    x1 = a[0]
+    x2 = b[0]
+    y1 = a[1]
+    y2 = b[1]
+
+    dist = ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** (1 / 2)
+
+    return dist
+
+
+# NOVIDADE
+def cria_cidades(n):
+    """Cria um dicionário aleatório de cidades com suas posições (x,y).
+
+    Args:
+      n: inteiro positivo
+        Número de cidades que serão visitadas pelo caixeiro.
+
+    Returns:
+      Dicionário contendo o nome das cidades como chaves e a coordenada no plano
+      cartesiano das cidades como valores.
+    """
+
+    cidades = {}
+
+    for i in range(n):
+        cidades[f"Cidade {i}"] = (random.random(), random.random())
+
+    return cidades
 
 ###############################################################################
 #                                    Genes                                    #
@@ -99,6 +147,23 @@ def individuo_senha(tamanho_senha, letras):
     
     return candidato
 
+def individuo_cv(cidades):
+    """Sorteia um caminho possível no problema do caixeiro viajante
+
+    Args:
+      cidades:
+        Dicionário onde as chaves são os nomes das cidades e os valores são as
+        coordenadas das cidades.
+
+    Return:
+      Retorna uma lista de nomes de cidades formando um caminho onde visitamos
+      cada cidade apenas uma vez.
+    """
+    
+    nomes = list(cidades.keys())
+    random.shuffle(nomes)
+    return nomes
+
 ###############################################################################
 #                                  População                                  #
 ###############################################################################
@@ -153,6 +218,25 @@ def populacao_inicial_senha(tamanho, tamanho_senha, letras):
     for n in range(tamanho):
         populacao.append(individuo_senha(tamanho_senha, letras))
     
+    return populacao
+
+def populacao_inicial_cv(tamanho, cidades):
+    """Cria população inicial no problema do caixeiro viajante.
+
+    Args
+      tamanho:
+        Tamanho da população.
+      cidades:
+        Dicionário onde as chaves são os nomes das cidades e os valores são as
+        coordenadas das cidades.
+
+    Returns:
+      Lista com todos os indivíduos da população no problema do caixeiro
+      viajante.
+    """
+    populacao = []
+    for _ in range(tamanho):
+        populacao.append(individuo_cv(cidades))
     return populacao
 
 ###############################################################################
@@ -245,6 +329,43 @@ def cruzamento_ponto_simples(pai,mae):
     
     return filho1, filho2
 
+def cruzamento_ordenado(pai, mae):
+    """Operador de cruzamento ordenado.
+
+    Neste cruzamento, os filhos mantém os mesmos genes que seus pais tinham,
+    porém em uma outra ordem. Trata-se de um tipo de cruzamento útil para
+    problemas onde a ordem dos genes é importante e não podemos alterar os genes
+    em si. É um cruzamento que pode ser usado no problema do caixeiro viajante.
+
+    Ver pág. 37 do livro do Wirsansky.
+
+    Args:
+      pai: uma lista representando um individuo
+      mae : uma lista representando um individuo
+
+    Returns:
+      Duas listas, sendo que cada uma representa um filho dos pais que foram os
+      argumentos. Estas listas mantém os genes originais dos pais, porém altera
+      a ordem deles
+    """
+    
+    corte1 = random.randint(0, len(pai)-2)
+    corte2 = random.randint(corte1 + 1, len(pai)-1)
+    
+    filho1 = pai[corte1:corte2]
+    
+    for gene in mae:
+        if gene not in filho1:
+            filho1.append(gene)
+    
+    filho2 = mae[corte1:corte2]
+    
+    for gene in pai:
+        if gene not in filho2:
+            filho2.append(gene)
+    
+    return filho1, filho2
+
 ###############################################################################
 #                                   Mutação                                   #
 ###############################################################################
@@ -287,6 +408,27 @@ def mutacao_senha(individuo, letras):
     """
     gene = random.randint(0, len(individuo)-1)
     individuo[gene] = gene_letras(letras)
+    return individuo
+
+def mutacao_de_troca(individuo):
+    """Troca o valor de dois genes.
+
+    Args:
+      individuo: uma lista representado um individuo.
+
+    Return:
+      O indivíduo recebido como argumento, porém com dois dos seus genes
+      trocados de posição.
+    """
+    
+    indices = list(range(len(individuo)))
+    lista_sorteada = random.sample(indices, k=2)
+    
+    indice1 = lista_sorteada[0]
+    indice2 = lista_sorteada[1]
+    
+    individuo[indice1], individuo[indice2] = individuo[indice2], individuo[indice1]
+    
     return individuo
 
 ###############################################################################
@@ -334,6 +476,40 @@ def funcao_objetivo_senha(individuo, senha_verdadeira):
         diferenca = diferenca + abs(ord(letra_candidato) - ord(letra_oficial))
 
     return diferenca
+
+def funcao_objetivo_cv(individuo, cidades):
+    """Computa a funcao objetivo de um individuo no problema do caixeiro viajante.
+
+    Args:
+      individiuo:
+        Lista contendo a ordem das cidades que serão visitadas
+      cidades:
+        Dicionário onde as chaves são os nomes das cidades e os valores são as
+        coordenadas das cidades.
+
+    Returns:
+      A distância percorrida pelo caixeiro seguindo o caminho contido no
+      `individuo`. Lembrando que após percorrer todas as cidades em ordem, o
+      caixeiro retorna para a cidade original de onde começou sua viagem.
+    """
+
+    distancia = 0
+    
+    for posicao in range(len(individuo)-1):
+        partida = cidades[individuo[posicao]]
+        chegada = cidades[individuo[posicao+1]]
+        
+        percurso = distancia_entre_dois_pontos(partida, chegada)
+        distancia = distancia + percurso
+    
+    # Cálculo do caminho de volta para a cidade inicial
+    partida = cidades[individuo[-1]]
+    chegada = cidades[individuo[0]]
+    
+    percurso = distancia_entre_dois_pontos(partida,chegada)
+    distancia = distancia + percurso
+
+    return distancia
 
 ###############################################################################
 #                         Função objetivo - população                         #
@@ -387,3 +563,144 @@ def funcao_objetivo_pop_senha(populacao, senha_verdadeira):
         resultado.append(funcao_objetivo_senha(individuo, senha_verdadeira))
 
     return resultado
+
+def funcao_objetivo_pop_cv(populacao, cidades):
+    """Computa a funcao objetivo de uma população no problema do caixeiro viajante.
+
+    Args:
+      populacao: lista com todos os inviduos da população
+      cidades: dicionário onde as chaves são os nomes das cidades e os valores são as
+        coordenadas das cidades.
+
+    Returns:
+      Lista contendo a distância percorrida pelo caixeiro para todos os
+      indivíduos da população.
+    """
+
+    resultado = []
+    for individuo in populacao:
+        resultado.append(funcao_objetivo_cv(individuo, cidades))
+
+    return resultado
+
+###############################################################################
+#                         Exercício GA.09 - Liga Ternária                     #
+###############################################################################
+
+def gene_lt(valor_max):
+    """Define uma quantidade em massa para um componente da liga ternária.
+    
+    Args:
+        valor_max: o valor máximo de peso disponível para a componente da liga.
+        
+    Return:
+        Uma massa entre 5 gramas, que é o mínimo para cada componente da liga, e a quantidade máxima total disponível.
+    
+    """
+    
+    gene = random.uniform(5,valor_max)    
+    return gene
+
+def individuo_lt(numero_genes, preco):
+    """Define um indivíduo com as massas de cada um dos elementos possíveis
+    
+    Args:
+        preco: lista que contenha todos os elementos disponíveis.
+        numero_genes: quantidade de genes do indivíduo, como é a liga ternária, a constante passada deve ser 3.
+    
+    Return:
+        Retorna o indivíduo, que é uma lista com 92 posições que represente a massa de cada um dos elementos do dicionário de elementos.
+    """
+    
+    individuo = [0 for _ in range(len(list(preco.values())))]
+    valor_maximo_massa = 100
+    
+    for n in range(numero_genes-1):
+        cond = True
+        while cond:
+            index = random.randint(0,len(individuo)-1)
+            
+            if individuo[index] == 0:
+                
+                # O valor máximo de cada elemento da liga deve ser no mínimo 5
+                # Por isso, devemos considerar um limite para cada elemento                
+                gene = gene_lt(valor_maximo_massa-((numero_genes-n-1)*5))
+                
+                individuo[index] = gene
+                valor_maximo_massa -= gene
+                cond = False
+    
+    index = random.randint(0,len(individuo)-1)    
+    individuo[index] = valor_maximo_massa
+    
+    return individuo
+
+def populacao_inicial_lt(numero_genes, tamanho_populacao, preco):
+    """Cria população inicial em que cada indivíduo é uma liga ternária.
+    
+    Args:
+        numero_genes:  quantidade de genes do indivíduo, como é a liga ternária, a constante passada deve ser 3;
+        tamanho_populacao: quantidade de indivíduos dentro da população;
+        preco: lista que contenha todos os elementos disponíveis.
+    
+    Return:
+        Retorna a população de indivíduos.
+    """
+    populacao = []
+    for _ in range(tamanho_populacao):
+        populacao.append(individuo_lt(numero_genes,preco))
+    return populacao
+
+def funcao_objetivo_lt(individuo, preco):
+    """Calcula o fitness da liga ternária.
+    
+    Args:
+        individuo: lista que contém os genes das ligas ternárias.
+        preco: dicionário que contém a relação de cada elemento com seu respectivo valor (dólar por kg).
+    
+    Return:
+        Retorna um valor que representa o fitness da liga.
+    """
+    valor_final = 0
+    for massa, valor in zip(individuo, preco.values()):
+        valor_final += massa*valor/1e3
+    return valor_final
+
+def funcao_objetivo_pop_lt(populacao, preco):
+    """Calcula a função objetivo para todos os membros da população.
+    
+    Args:
+        populacao: lista com todos os indivíduos da população;
+        preco: dicionário que contém a relação de cada elemento com seu respectivo valor (dólar por kg).
+    
+    Return:
+        Retorna a lista de valores que representa o fitness de cada elemento da população.
+    """
+    fitness = []
+    for individuo in populacao:
+        fobj = funcao_objetivo_lt(individuo, preco)
+        fitness.append(fobj)
+    return fitness
+
+def cruzamento_ponto_simples_lt(pai, mae, n_genes):
+    """Operador de cruzamento de ponto simples para o problema das ligas ternárias.
+    
+    Args:
+        pai: uma lista representando um indivíduo;
+        mae: uma lista representando um indivíduo.
+    
+    Return:
+        Duas listas, sendo que cada uma representa um filho dos pais que foram os argumentos.
+    """
+    
+    # Se começasse no zero, ou seja, no primeiro índice da lista, não existira mistura
+    # assim como se fosse possível pegar o último item da lista
+        
+    while True:
+        ponto_de_corte = random.randint(1,len(pai)-1)
+
+        filho1 = pai[:ponto_de_corte] + mae[ponto_de_corte:]
+        filho2 = mae[:ponto_de_corte] + pai[ponto_de_corte:]
+                
+        if np.count_nonzero(filho1) == n_genes and np.count_nonzero(filho2) == n_genes:
+            return filho1, filho2
