@@ -4,7 +4,7 @@
 
 Abaixo são elencados os experimentos desenvolvidos até o presente momento na disciplina e demais arquivos contidos nesta pasta do repositório.
 
-<details><summary>Experimentos desenvolvidos em aula</summary>
+<details><summary>Experimentos desenvolvidos em aula</summary><br>
 
 <a href="https://github.com/pedrozanineli/rnag/blob/main/AlgoritmosGeneticos/experimento%20A.01%20-%20busca%20aleatoria.ipynb">Experimento A.01</a> - experimento de busca aleatório para o problema das caixas binárias como forma de introduzir onde os algoritmos genéticos podem ser aplicados, entretanto, sem a aplicação de fato desses algoritmos;
 
@@ -22,7 +22,7 @@ Abaixo são elencados os experimentos desenvolvidos até o presente momento na d
 
 </details>
 
-<details><summary>Experimentos desenvolvidos da lista de exercícios</summary>
+<details><summary>Experimentos desenvolvidos da lista de exercícios</summary><br>
 
 <a href="https://github.com/pedrozanineli/rnag/blob/main/AlgoritmosGeneticos/experimento%20GA.02%20-%20performance%20caixas%20binarias.ipynb">Experimento performance das caixas binárias</a> - como três algoritmos diferentes foram testados para o problema das caixas binárias, o experimento tem como objetivo a comparação de cada um deles;
 
@@ -30,7 +30,7 @@ Abaixo são elencados os experimentos desenvolvidos até o presente momento na d
 
 </details>
 
-<details><summary>Outros arquivos</summary>
+<details><summary>Outros arquivos</summary><br>
     
 <a href="https://github.com/pedrozanineli/rnag/blob/main/AlgoritmosGeneticos/classes.py">classes.py</a> - arquivo que contém as classes que foram utilizadas no desenvolvimento dos experimentos;
     
