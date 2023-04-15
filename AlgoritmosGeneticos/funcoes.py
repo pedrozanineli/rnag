@@ -5,8 +5,6 @@ import numpy as np
 #                                   Suporte                                   #
 ##############################################################################+
 
-
-# NOVIDADE
 def distancia_entre_dois_pontos(a, b):
     """Computa a distância Euclidiana entre dois pontos em R^2
 
@@ -27,8 +25,6 @@ def distancia_entre_dois_pontos(a, b):
 
     return dist
 
-
-# NOVIDADE
 def cria_cidades(n):
     """Cria um dicionário aleatório de cidades com suas posições (x,y).
 
@@ -47,6 +43,40 @@ def cria_cidades(n):
         cidades[f"Cidade {i}"] = (random.random(), random.random())
 
     return cidades
+
+def computa_mochila(individuo, objetos, ordem_dos_nomes):
+    """Computa o valor total e peso total de uma mochila
+    Args:
+      individiuo:
+        Lista binária contendo a informação de quais objetos serão selecionados.
+      objetos:
+        Dicionário onde as chaves são os nomes dos objetos e os valores são
+        dicionários com a informação do peso e valor.
+      ordem_dos_nomes:
+        Lista contendo a ordem dos nomes dos objetos.
+    Returns:
+      valor_total: valor total dos itens da mochila em unidades de dinheiros.
+      peso_total: peso total dos itens da mochila em unidades de massa.
+    """
+
+    # Vamos ter uma lista cheia de zeros e uns,
+    # Se 0, não pegou objeto
+    # Se 1, pegou o objeto
+    
+    # Algoritmo irá gerar listas aleatórias que irão computar itens escolhidos aleatoriamente
+    # Caso o item tenha sido escolhido, computa seu valor
+    
+    valor_total,peso_total = 0,0
+    
+    for pegou_o_item_ou_nao, nome_do_item in zip(individuo, ordem_dos_nomes):
+        if pegou_o_item_ou_nao == 1:
+            valor_do_item = objetos[nome_do_item]['valor']
+            peso_do_item = objetos[nome_do_item]['peso']
+            
+            valor_total += valor_do_item
+            peso_total += peso_do_item
+    
+    return valor_total, peso_total
 
 ###############################################################################
 #                                    Genes                                    #
@@ -511,6 +541,30 @@ def funcao_objetivo_cv(individuo, cidades):
 
     return distancia
 
+def funcao_objetivo_mochila(individuo, objetos, limite, ordem_dos_nomes):
+    """Computa a funcao objetivo de um candidato no problema da mochila.
+    Args:
+      individiuo:
+        Lista binária contendo a informação de quais objetos serão selecionados.
+      objetos:
+        Dicionário onde as chaves são os nomes dos objetos e os valores são
+        dicionários com a informação do peso e valor.
+      limite:
+        Número indicando o limite de peso que a mochila aguenta.
+      ordem_dos_nomes:
+        Lista contendo a ordem dos nomes dos objetos.
+    Returns:
+      Valor total dos itens inseridos na mochila considerando a penalidade para
+      quando o peso excede o limite.
+    """
+    
+    valor_mochila, peso_mochila = computa_mochila(individuo,objetos,ordem_dos_nomes)
+    
+    if peso_mochila > limite:
+        return 0.01
+    
+    return valor_mochila
+
 ###############################################################################
 #                         Função objetivo - população                         #
 ###############################################################################
@@ -583,6 +637,32 @@ def funcao_objetivo_pop_cv(populacao, cidades):
 
     return resultado
 
+def funcao_objetivo_pop_mochila(populacao, objetos, limite, ordem_dos_nomes):
+    """Computa a fun. objetivo de uma populacao no problema da mochila
+    Args:
+      populacao:
+        Lista com todos os individuos da população
+      objetos:
+        Dicionário onde as chaves são os nomes dos objetos e os valores são
+        dicionários com a informação do peso e valor.
+      limite:
+        Número indicando o limite de peso que a mochila aguenta.
+      ordem_dos_nomes:
+        Lista contendo a ordem dos nomes dos objetos.
+    Returns:
+      Lista contendo o valor dos itens da mochila de cada indivíduo.
+    """
+
+    resultado = []
+    for individuo in populacao:
+        resultado.append(
+            funcao_objetivo_mochila(
+                individuo, objetos, limite, ordem_dos_nomes
+            )
+        )
+
+    return resultado
+
 ###############################################################################
 #                         Exercício GA.09 - Liga Ternária                     #
 ###############################################################################
@@ -648,7 +728,8 @@ def populacao_inicial_lt(numero_genes, tamanho_populacao, preco):
     """
     populacao = []
     for _ in range(tamanho_populacao):
-        populacao.append(individuo_lt(numero_genes,preco))
+        indv = individuo_lt(numero_genes,preco)
+        populacao.append(indv)
     return populacao
 
 def funcao_objetivo_lt(individuo, preco):
@@ -682,25 +763,39 @@ def funcao_objetivo_pop_lt(populacao, preco):
         fitness.append(fobj)
     return fitness
 
-def cruzamento_ponto_simples_lt(pai, mae, n_genes):
-    """Operador de cruzamento de ponto simples para o problema das ligas ternárias.
+def cruzamento_lt(pai, mae, preco, n_genes):
+    """Operador de cruzamento que mantém os valores do pai e da mãe, mutando a posição de forma aleatória.
     
     Args:
         pai: uma lista representando um indivíduo;
-        mae: uma lista representando um indivíduo.
-    
+        mae: uma lista representando um indivíduo;
+        preco: dicionário que contém a relação de elementos e preço;
+        n_genes: quantidade de genes, na liga ternária, será 3.
+        
     Return:
-        Duas listas, sendo que cada uma representa um filho dos pais que foram os argumentos.
+        Retorna dois filhos a partir do cruzamento
     """
     
-    # Se começasse no zero, ou seja, no primeiro índice da lista, não existira mistura
-    # assim como se fosse possível pegar o último item da lista
-        
-    while True:
-        ponto_de_corte = random.randint(1,len(pai)-1)
+    lista_index_pai = [index for index, valor in enumerate(pai) if valor != 0]
+    lista_index_mae = [index for index, valor in enumerate(mae) if valor != 0]
 
-        filho1 = pai[:ponto_de_corte] + mae[ponto_de_corte:]
-        filho2 = mae[:ponto_de_corte] + pai[ponto_de_corte:]
-                
-        if np.count_nonzero(filho1) == n_genes and np.count_nonzero(filho2) == n_genes:
-            return filho1, filho2
+    lista_valores_pai = [valor for index, valor in enumerate(pai) if valor != 0]
+    lista_valores_mae = [valor for index, valor in enumerate(mae) if valor != 0]
+
+    CHANCE_TROCA = 0.05
+
+    filho1,filho2 = np.zeros(len(preco.values())),np.zeros(len(preco.values()))
+    
+    for n in range(n_genes):
+        if random.random() < CHANCE_TROCA:
+            aux = lista_index_pai[n]
+            lista_index_pai[n] = lista_index_mae[n]
+            lista_index_mae[n] = aux
+    
+    for index, valor in zip(lista_index_pai,lista_valores_pai):
+        filho1[index] = valor
+
+    for index, valor in zip(lista_index_mae,lista_valores_mae):
+        filho2[index] = valor
+
+    return filho1, filho2
