@@ -674,7 +674,7 @@ def gene_lt(valor_max):
         valor_max: o valor máximo de peso disponível para a componente da liga.
         
     Return:
-        Uma massa entre 5 gramas, que é o mínimo para cada componente da liga, e a quantidade máxima total disponível.
+        Uma massa entre 5 gramas, o qual é o mínimo para cada componente da liga especificado no problema, e a quantidade máxima total disponível.
     
     """
     
@@ -682,14 +682,14 @@ def gene_lt(valor_max):
     return gene
 
 def individuo_lt(numero_genes, preco):
-    """Define um indivíduo com as massas de cada um dos elementos possíveis
+    """Define um indivíduo com as massas de cada um dos elementos possíveis.
     
     Args:
         preco: lista que contenha todos os elementos disponíveis.
         numero_genes: quantidade de genes do indivíduo, como é a liga ternária, a constante passada deve ser 3.
     
     Return:
-        Retorna o indivíduo, que é uma lista com 92 posições que represente a massa de cada um dos elementos do dicionário de elementos.
+        Retorna o indivíduo, sendo uma lista com 92 posições que represente a massa de cada um dos elementos do dicionário de elementos.
     """
     
     individuo = [0 for _ in range(len(list(preco.values())))]
@@ -726,6 +726,7 @@ def populacao_inicial_lt(numero_genes, tamanho_populacao, preco):
     Return:
         Retorna a população de indivíduos.
     """
+    
     populacao = []
     for _ in range(tamanho_populacao):
         indv = individuo_lt(numero_genes,preco)
@@ -733,15 +734,16 @@ def populacao_inicial_lt(numero_genes, tamanho_populacao, preco):
     return populacao
 
 def funcao_objetivo_lt(individuo, preco):
-    """Calcula o fitness da liga ternária.
+    """Calcula o fitness da liga ternária com base no preço de cada elemento.
     
     Args:
         individuo: lista que contém os genes das ligas ternárias.
         preco: dicionário que contém a relação de cada elemento com seu respectivo valor (dólar por kg).
     
     Return:
-        Retorna um valor que representa o fitness da liga.
+        Retorna um valor que representa o preço total de uma liga.
     """
+    
     valor_final = 0
     for massa, valor in zip(individuo, preco.values()):
         valor_final += massa*valor/1e3
@@ -773,7 +775,7 @@ def cruzamento_lt(pai, mae, preco, n_genes):
         n_genes: quantidade de genes, na liga ternária, será 3.
         
     Return:
-        Retorna dois filhos a partir do cruzamento
+        Retorna dois filhos a partir do cruzamento.
     """
     
     lista_index_pai = [index for index, valor in enumerate(pai) if valor != 0]
