@@ -26,6 +26,8 @@ Abaixo são elencados os experimentos desenvolvidos até o presente momento na d
 
 <a href="https://github.com/pedrozanineli/rnag/blob/main/AlgoritmosGeneticos/experimento%20GA.02%20-%20performance%20caixas%20binarias.ipynb">Experimento performance das caixas binárias</a> - como três algoritmos diferentes foram testados para o problema das caixas binárias, o experimento tem como objetivo a comparação de cada um deles;
 
+<a href="https://github.com/pedrozanineli/rnag/blob/main/AlgoritmosGeneticos/experimento%20GA.03%20-%20caixeiro%20com%20gasolina%20infinita.ipynb">Experimento caixeira viajante com gasolina infinita</a> - diferentemente do experimento do caixeiro viajante que deve minimizar o caminho, o presente experimento tem como objetivo maximizar o caminho encontrado pelo caixeiro;
+
 <a href="https://github.com/pedrozanineli/rnag/blob/main/AlgoritmosGeneticos/experimento%20GA.09%20-%20liga%20ternaria%20mais%20cara.ipynb">Experimento da liga ternária mais cara do mundo</a> - experimento de maximização do preço de uma liga ternária aplicando restrições de peso para cada elemento da sua composição.
 
 </details>
