@@ -11,6 +11,8 @@ Abaixo são elencados os experimentos desenvolvidos até o presente momento na d
 <a href="https://github.com/pedrozanineli/rnag/blob/main/RedesNeurais/experimento%20R.02%20-%20classes.ipynb">Experimento R.02</a> - introdução ao conceito e manipulação de classes;
 
 <a href="https://github.com/pedrozanineli/rnag/blob/main/RedesNeurais/experimento%20R.03%20-%20construindo%20um%20grafo%20automaticamente.ipynb">Experimento R.03</a> - código em que é testada a implementação automática do grafo que representa a rede neural;
+    
+<a href="https://github.com/pedrozanineli/rnag/blob/main/RedesNeurais/experimento%20R.04%20-%20computando%20gradientes%20locais.ipynb">Experimento R.04</a> - notebook em que o cálculo de backpropagation foi implementado manualmente na rede neural, de forma que, em seguida, foi implementado o seu cálculo automático;
 
 </details>
 
@@ -21,7 +23,7 @@ Abaixo são elencados os experimentos desenvolvidos até o presente momento na d
 <a href="https://github.com/pedrozanineli/rnag/blob/main/RedesNeurais/constantes.py">constantes.py</a> - arquivo que contém as constantes que foram utilizadas no desenvolvimento dos experimentos;
     
 <a href="https://github.com/pedrozanineli/rnag/blob/main/RedesNeurais/funcoes.py">funcoes.py</a> - arquivo que contém as funções que foram utilizadas no desenvolvimento dos experimentos.
-
+    
 </details>
 
 ### O que são Redes Neurais?
